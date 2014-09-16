@@ -1,0 +1,14 @@
+{
+  "name": "proof-of-concept",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/magicwrites/proofs-of-concept.git"
+  },
+  "dependencies": {
+    "angular": "~1.2.16",
+    "socket.io-client": "~1.0.6",
+    "jquery": "~2.1.1",
+    "lodash": "~2.4.1"
+  }
+}

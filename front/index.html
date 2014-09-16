@@ -1,0 +1,75 @@
+<!doctype html>
+
+<head>
+    <meta name="viewport" content="initial-scale=1, minimum-scale=1, width=device-width" />
+    <link rel="stylesheet" href="http://magicwrites.net/assets/css/documents.css" />
+    <title>Events between node and angular modules</title>
+</head>
+
+<body data-ng-app="demo">
+    <h1>Events between node and angular modules</h1>
+
+    <h2>How to</h2>
+
+    <p>Running <code>npm i &amp;&amp; grunt</code> command in the console with working nodejs engine should be enough to preview the proof of concept.</p>
+
+    <h2>Tests</h2>
+
+    <h3>Back-end</h3>
+
+    <p>The back-end modules are wired to emit an event in random time intervals. Those should be noted by angular and updated below.</p>
+
+    <ul data-ng-controller="eventsController">
+        <li>
+            <strong>module-numbers</strong>
+            <span>was called <strong>{{ numbers.count }}</strong> times</span>
+            <span data-ng-show="numbers.latest">, with latest response: <strong>{{ numbers.latest }}</strong></span>.
+        </li>
+        <li>
+            <strong>module-letters</strong>
+            <span>was called <strong>{{ letters.count }}</strong> times</span>
+            <span data-ng-show="letters.latest">, with latest response: <strong>{{ letters.latest }}</strong></span>.
+        </li>
+        <li>
+            <strong>module-colors</strong>
+            <span>was called <strong>{{ colors.count }}</strong> times</span>
+            <span data-ng-show="colors.latest">, with latest response: <strong>{{ colors.latest }}</strong></span>.
+        </li>
+    </ul>
+
+    <h3>Front-end</h3>
+
+    <p>Manual event broadcast should work as well. Those buttons are proof of that.</p>
+
+    <menu>
+        <button>Request new number</button>
+        <button>Request new letter</button>
+        <button>Request new color</button>
+    </menu>
+
+    <!-- scripts -->
+
+    <script src="/bower-components/angular/angular.min.js"></script>
+    <script src="/javascript/events.js"></script>
+
+    <script>
+        var module = angular.module('demo', ['magicwrites.events']);
+
+        module.controller('eventsController', function ($scope) {
+            $scope.numbers = {
+                count: 0,
+                latest: null
+            };
+
+            $scope.letters = {
+                count: 0,
+                latest: null
+            };
+
+            $scope.colors = {
+                count: 0,
+                latest: null
+            };
+        });
+    </script>
+</body>
