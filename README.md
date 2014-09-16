@@ -1,1 +1,1 @@
-Every proof of concept is located in a separate branch. Review those for code.
+A way to create multi-module architecture that communicates with events across nodejs event emitter and web sockets.
