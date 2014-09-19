@@ -1,0 +1,16 @@
+{
+    "trigger": 3,
+    "colors": [
+        "red",
+        "green",
+        "blue",
+        "yellow",
+        "orange",
+        "brown",
+        "white",
+        "black",
+        "teal",
+        "purple",
+        "pink"
+    ]
+}

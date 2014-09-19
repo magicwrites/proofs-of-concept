@@ -11,9 +11,9 @@
 
     <h2>How to</h2>
 
-    <p>Running <code>npm i &amp;&amp; grunt</code> command in the console with working nodejs engine should be enough to preview the proof of concept.</p>
+    <p>Running <code>npm i &amp;&amp; grunt</code> command in the console with working nodejs engine should be enough to preview the working code.</p>
 
-    <h2>Tests</h2>
+    <h2>Proof of concept</h2>
 
     <h3>Back-end</h3>
 
@@ -50,12 +50,13 @@
     <!-- scripts -->
 
     <script src="/bower-components/angular/angular.min.js"></script>
+    <script src="/bower-components/socket.io-client/socket.io.js"></script>
     <script src="/javascript/events.js"></script>
 
     <script>
         var module = angular.module('demo', ['magicwrites.events']);
 
-        module.controller('eventsController', function ($scope) {
+        module.controller('eventsController', function($scope, events) {
             $scope.numbers = {
                 count: 0,
                 latest: null
@@ -70,6 +71,20 @@
                 count: 0,
                 latest: null
             };
+
+            events.socket.on('connect', function () {
+                console.info('you have connected');
+            });
+
+            events.socket.on('user connected', function (identifier) {
+                console.log(events.socket, identifier);
+
+                if (events.socket.id !== identifier) {
+                    console.info('another user connected');
+                }
+            });
+
+            events.socket.emit('start');
         });
     </script>
 </body>
