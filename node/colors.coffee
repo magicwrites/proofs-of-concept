@@ -12,9 +12,16 @@ startGeneratingColors = () ->
 
 checkForTrigger = (number) ->
     trigger = parseInt exports.configuration.trigger, 10
-    isTrigger = if number is trigger then yes else no
+    isTriggered = if number < trigger then yes else no
+
+    if isTriggered then exports.emitter.emit 'colors generation start'
+
+    response = isTriggered
 
 exports.runUpon = (emitter, configuration) ->
     exports.emitter = emitter
     exports.configuration = configuration
-    exports.emitter.until 'number generated', checkForTrigger, startGeneratingColors
+    exports.emitter.when
+        event: 'number generated'
+        passes: checkForTrigger
+        then: startGeneratingColors

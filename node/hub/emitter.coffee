@@ -1,4 +1,7 @@
 events = require 'events'
+util = require 'util'
+
+logger = require './logger'
 
 
 
@@ -12,14 +15,19 @@ originalFunctions =
 
 
 emitter.emit = (eventName, data) ->
-    jsonized = JSON.stringify data, null, 4
-    prefix = 'hub - event - %s'
-    if jsonized then console.info prefix + ' - %s', eventName, jsonized else console.info prefix, eventName
+    data = if data then JSON.stringify data else 'no data'
+    message = util.format 'emitted %s, %s', eventName, data
+
+    logger.info message
     originalFunctions.emit.apply emitter, arguments
 
-emitter.until = (eventName, conditionTester, callback) ->
-    emitter.once eventName, (data) ->
-        if conditionTester data then callback() else emitter.until eventName, conditionTester, callback
+emitter.when = (defined) ->
+    if not defined.event then throw new Error 'missing tested event'
+    if not defined.passes then throw new Error 'missing event data tester'
+    if not defined.then then throw new Error 'missing callback function'
+
+    emitter.once defined.event, (data) ->
+        if defined.passes data then defined.then data else emitter.when defined
 
 
 
