@@ -1,9 +1,3 @@
-express = require 'express'
-http = require 'http'
-socketio = require 'socket.io'
-
-
-
 exports.emitter = require './hub/emitter'
 exports.server = require './hub/server'
 
