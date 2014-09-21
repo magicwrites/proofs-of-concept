@@ -15,5 +15,5 @@ exports.runUpon = (emitter, configuration) ->
     exports.configuration = configuration
 
     exports.emitter.once 'user connected', () ->
-        exports.emitter.emit 'letters generation start'
+        exports.emitter.emit 'letters generation starting'
         startGeneratingLetters()

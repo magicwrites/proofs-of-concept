@@ -22,9 +22,9 @@ emitter.emit = (eventName, data) ->
     originalFunctions.emit.apply emitter, arguments
 
 emitter.when = (defined) ->
-    if not defined.event then throw new Error 'missing tested event'
-    if not defined.passes then throw new Error 'missing event data tester'
-    if not defined.then then throw new Error 'missing callback function'
+    if not defined.event then throw new Error 'emitter.when is missing tested event'
+    if not defined.passes then throw new Error 'emitter.when is missing event data tester'
+    if not defined.then then throw new Error 'emitter.when is missing callback function'
 
     emitter.once defined.event, (data) ->
         if defined.passes data then defined.then data else emitter.when defined

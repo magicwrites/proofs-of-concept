@@ -12,6 +12,6 @@ exports.info = (message) ->
     if not _.isEmpty parameters then message = util.format message, parameters
 
     date = moment().format 'DD-MM-YYYY HH:mm:ss'
-    dateColored = chalk.blue date
+    dateStyled = chalk.blue date
 
-    console.info '%s - %s', dateColored, message
+    console.info '%s - %s', dateStyled, message

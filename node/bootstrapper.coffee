@@ -3,10 +3,12 @@ helpers = require 'helpers'
 helpers.environment.set 'development'
 
 logger = require './logger'
-hub = require './hub'
-colors = require './colors'
-letters = require './letters'
-numbers = require './numbers'
+
+proofOfConcept =
+    hub: require './hub'
+    colors: require './colors'
+    letters: require './letters'
+    numbers: require './numbers'
 
 configurations =
     hub: require './../configurations/hub'
@@ -17,11 +19,11 @@ configurations =
 
 
 exports.run = () ->
-    colors.runUpon hub.emitter, configurations.colors
-    letters.runUpon hub.emitter, configurations.letters
-    numbers.runUpon hub.emitter, configurations.numbers
+    proofOfConcept.colors.runUpon proofOfConcept.hub.emitter, configurations.colors
+    proofOfConcept.letters.runUpon proofOfConcept.hub.emitter, configurations.letters
+    proofOfConcept.numbers.runUpon proofOfConcept.hub.emitter, configurations.numbers
 
-    hub.run configurations.hub
+    proofOfConcept.hub.run configurations.hub
 
     logger.info 'modules bootstrapped'
 

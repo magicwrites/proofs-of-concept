@@ -14,7 +14,7 @@ checkForTrigger = (number) ->
     trigger = parseInt exports.configuration.trigger, 10
     isTriggered = if number < trigger then yes else no
 
-    if isTriggered then exports.emitter.emit 'colors generation start'
+    if isTriggered then exports.emitter.emit 'colors generation starting'
 
     response = isTriggered
 

@@ -6,57 +6,81 @@
     <title>Events between node and angular modules</title>
 </head>
 
-<body data-ng-app="demo">
+<body data-ng-app="demo" data-ng-controller="eventsController">
     <h1>Events between node and angular modules</h1>
 
     <h2>How to</h2>
 
-    <p>Running <code>npm i &amp;&amp; grunt</code> command in the console with working nodejs engine should be enough to preview the working code.</p>
+    <p>Running <code>npm i &amp;&amp; grunt</code> and <code>coffee node/bootstrap.coffee</code> commands in the console with working nodejs engine and globally installed coffee-script npm library should be enough to preview the working code.</p>
 
     <h2>Proof of concept</h2>
 
-    <h3>Back-end</h3>
+    <p>Letter module is by default started and wired to emit a letter in random time intervals. It illustrates the basics of back-end module to front-end angular communication through socket.io library.</p>
 
-    <p>The back-end modules are wired to emit an event in random time intervals. Those should be noted by angular and updated below.</p>
+    <p>Number module can be started by pressing the button at the bottom of the page. This presents a way to send events from angular to the back-end service through the event hub.</p>
 
-    <ul data-ng-controller="eventsController">
+    <p>Color service is starting when a number module generates an integer lower than the trigger number defined in back-end configuration. This is an example of back-end communication that is hidden from the front-end user.</p>
+
+    <ul>
         <li>
-            <strong>module-numbers</strong>
+            <strong>module letters</strong>
+            <span>was called <strong>{{ letters.count }}</strong> times</span>
+            <span data-ng-show="letters.latest">, with latest response: <strong>{{ letters.latest }}</strong></span>.
+            <!-- please note that for some reason 'F' is falsy for data-ng-show, thus we generated X instead -->
+        </li>
+        <li>
+            <strong>module numbers</strong>
             <span>was called <strong>{{ numbers.count }}</strong> times</span>
             <span data-ng-show="numbers.latest">, with latest response: <strong>{{ numbers.latest }}</strong></span>.
         </li>
         <li>
-            <strong>module-letters</strong>
-            <span>was called <strong>{{ letters.count }}</strong> times</span>
-            <span data-ng-show="letters.latest">, with latest response: <strong>{{ letters.latest }}</strong></span>.
-        </li>
-        <li>
-            <strong>module-colors</strong>
+            <strong>module colors</strong>
             <span>was called <strong>{{ colors.count }}</strong> times</span>
             <span data-ng-show="colors.latest">, with latest response: <strong>{{ colors.latest }}</strong></span>.
         </li>
     </ul>
 
-    <h3>Front-end</h3>
+    <p>If you feel in the mood:</p>
 
-    <p>Manual event broadcast should work as well. Those buttons are proof of that.</p>
-
-    <menu>
-        <button>Request new number</button>
-        <button>Request new letter</button>
-        <button>Request new color</button>
-    </menu>
+    <button data-ng-click="numbersGenerationStart()">Begin numbers generation</button>
 
     <!-- scripts -->
 
-    <script src="/bower-components/angular/angular.min.js"></script>
+    <script src="/bower-components/angular/angular.js"></script>
     <script src="/bower-components/socket.io-client/socket.io.js"></script>
     <script src="/javascript/events.js"></script>
 
     <script>
         var module = angular.module('demo', ['magicwrites.events']);
 
+        module.config(function (eventsProvider) {
+            // configure the events service
+
+            eventsProvider.configure({
+                // connect with locally exposed socket.io, it will have to change if you will move this code elsewhere
+
+                host: 'localhost',
+                port: 3000,
+
+                // define events that should be forwarded to the angular root scope
+
+                // you can of course manually listen for any event through socket.io client, but this helps to handle
+                // proper listeners per scope cleaning for angular controllers
+
+                events: ['letter generated', 'number generated', 'color generated', 'numbers generation start']
+            });
+        });
+
         module.controller('eventsController', function($scope, events) {
+
+            // some sample direct socket.io event handling
+
+            events.socket.on('connect', function () {
+                console.info('you have connected');
+            });
+
+            // usage of the back-end emitted events
+
             $scope.numbers = {
                 count: 0,
                 latest: null
@@ -72,19 +96,26 @@
                 latest: null
             };
 
-            events.socket.on('connect', function () {
-                console.info('you have connected');
+            $scope.$on('letter generated', function (event, letter) {
+                $scope.letters.count++;
+                $scope.letters.latest = letter;
             });
 
-            events.socket.on('user connected', function (identifier) {
-                console.log(events.socket, identifier);
-
-                if (events.socket.id !== identifier) {
-                    console.info('another user connected');
-                }
+            $scope.$on('color generated', function (event, color) {
+                $scope.colors.count++;
+                $scope.colors.latest = color;
             });
 
-            events.socket.emit('start');
+            $scope.$on('number generated', function (event, number) {
+                $scope.numbers.count++;
+                $scope.numbers.latest = number;
+            });
+
+            // usage of the events emitted from front-end to the back-end hub
+
+            $scope.numbersGenerationStart = function () {
+                events.socket.emit('numbers generation start');
+            };
         });
     </script>
 </body>

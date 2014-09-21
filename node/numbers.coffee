@@ -13,6 +13,6 @@ exports.runUpon = (emitter, configuration) ->
     exports.emitter = emitter
     exports.configuration = configuration
 
-    exports.emitter.once 'letters generation start', () ->
-        exports.emitter.emit 'numbers generation start'
+    exports.emitter.once 'numbers generation start', () ->
+        exports.emitter.emit 'numbers generation starting'
         startGeneratingNumbers()
