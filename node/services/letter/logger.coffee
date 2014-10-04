@@ -1,6 +1,6 @@
 util = require 'util'
 _ = require 'lodash'
-logger = require './../logger'
+logger = require './../../logger'
 
 
 
@@ -10,6 +10,6 @@ exports.info = (message) ->
 
     if not _.isEmpty parameters then message = util.format message, parameters
 
-    message = util.format 'hub - %s', message
+    message = util.format 'letter service - %s', message
 
     logger.info message

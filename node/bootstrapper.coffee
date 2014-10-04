@@ -1,32 +1,40 @@
-moment = require 'moment'
-helpers = require 'helpers'
-helpers.environment.set 'development'
+_ = require 'lodash'
+forever = require 'forever-monitor'
 
-logger = require './logger'
-
-proofOfConcept =
-    hub: require './hub'
-    colors: require './colors'
-    letters: require './letters'
-    numbers: require './numbers'
+loggers =
+    bootstrapper: require './logger'
+    hub: require './hub/logger'
+    services:
+        letter: require './services/letter/logger'
 
 configurations =
-    hub: require './../configurations/hub'
-    colors: require './../configurations/colors'
-    letters: require './../configurations/letters'
-    numbers: require './../configurations/numbers'
+    hub: require './../configurations/hub.json'
+    services:
+        letter: require './../configurations/services/letter.json'
+
+concept =
+    hub: require './../node/hub'
+    services:
+        letter: require './../node/services/letter'
 
 
 
-exports.run = () ->
-    proofOfConcept.colors.runUpon proofOfConcept.hub.emitter, configurations.colors
-    proofOfConcept.letters.runUpon proofOfConcept.hub.emitter, configurations.letters
-    proofOfConcept.numbers.runUpon proofOfConcept.hub.emitter, configurations.numbers
+run = () ->
+    environmentsAvailable = [ 'development', 'test', 'publishment' ]
+    environment = process.argv[2] or 'development'
+    environment = if _.contains environmentsAvailable, environment then environment else 'development'
 
-    proofOfConcept.hub.run configurations.hub
+    loggers.bootstrapper.info 'running modules in %s environment', environment
 
-    logger.info 'modules bootstrapped'
+    options =
+        command: 'coffee'
+        options: [ environment ]
+
+    concept =
+        hub: new forever.Monitor 'hub.coffee', options
+        services:
+            letter: new forever.Monitor 'services/letter.coffee', options
 
 
 
-do exports.run
+do run

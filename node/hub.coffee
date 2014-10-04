@@ -1,22 +1,33 @@
-exports.emitter = require './hub/emitter'
-exports.server = require './hub/server'
+helpers = require 'helpers'
+logger = require './hub/logger'
+configuration = require './../configurations/hub.json'
 
 
 
-exports.run = (configuration) ->
-    exports.emitter.on 'number generated', (number) ->
-        exports.server.sockets.emit 'number generated', number
+sockets =
+    concept:
+        letter: null
+        number: null
+        color: null
+    users: []
 
-    exports.emitter.on 'letter generated', (letter) ->
-        exports.server.sockets.emit 'letter generated', letter
 
-    exports.emitter.on 'color generated', (color) ->
-        exports.server.sockets.emit 'color generated', color
 
-    exports.server.sockets.on 'connection', (socket) ->
-        exports.emitter.emit 'user connected'
+exports.run = (configuration, logger) ->
+    logger.info 'running'
 
-        socket.on 'numbers generation start', () ->
-            exports.emitter.emit 'numbers generation start'
+    server = helpers.sockets.getServer logger, configuration.port
 
-    exports.server.listen configuration.port
+    server.sockets.on 'connection', (socket) ->
+        logger.info 'connection received'
+
+        socket.on 'introduce', (response) ->
+            switch response.client
+                when 'letter service' then sockets.concept.letter = socket
+                when 'number service' then sockets.concept.number = socket
+                when 'color service' then sockets.concept.color = socket
+                when 'user' then sockets.users.push { socket: socket, user: response.user or {} }
+
+
+
+exports.run configuration, logger

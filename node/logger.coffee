@@ -1,7 +1,6 @@
-moment = require 'moment'
 util = require 'util'
-chalk = require 'chalk'
 _ = require 'lodash'
+helpers = require 'helpers'
 
 
 
@@ -11,7 +10,6 @@ exports.info = (message) ->
 
     if not _.isEmpty parameters then message = util.format message, parameters
 
-    date = moment().format 'DD-MM-YYYY HH:mm:ss'
-    dateStyled = chalk.blue date
+    message = util.format 'proof of concept - %s', message
 
-    console.info '%s - %s', dateStyled, message
+    helpers.logger.info message
